@@ -4,3 +4,7 @@ export {
     DockerImageNameCreator,
     executeDockerBuild,
 } from "./docker/executeDockerBuild";
+export {
+    DockerBuild,
+    DockerBuildRegistration,
+} from "./docker/DockerBuild";

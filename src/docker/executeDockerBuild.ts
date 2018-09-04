@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    HandlerResult,
-} from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     ExecuteGoal,
@@ -31,12 +28,8 @@ import {
     postLinkImageWebhook,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import {
-    ChildProcessResult,
-    spawnAndWatch,
-} from "@atomist/sdm/api-helper/misc/spawned";
+import { spawnAndWatch } from "@atomist/sdm/api-helper/misc/spawned";
 import { ExecuteGoalResult } from "@atomist/sdm/api/goal/ExecuteGoalResult";
-import { ProjectLoader } from "@atomist/sdm/spi/project/ProjectLoader";
 
 export interface DockerOptions {
 
@@ -72,20 +65,18 @@ export type DockerImageNameCreator = (p: GitProject,
                                       ctx: HandlerContext) => Promise<{ registry: string, name: string, version: string }>;
 
 /**
- * Execute a Docker build for the project available from provided projectLoader
- * @param {ProjectLoader} projectLoader
+ * Execute a Docker build for the project
  * @param {DockerImageNameCreator} imageNameCreator
  * @param {DockerOptions} options
  * @returns {ExecuteGoal}
  */
-export function executeDockerBuild(projectLoader: ProjectLoader,
-                                   imageNameCreator: DockerImageNameCreator,
+export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
                                    preparations: PrepareForGoalExecution[] = [],
                                    options: DockerOptions): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { sdmGoal, credentials, id, context, progressLog } = goalInvocation;
+        const { configuration, sdmGoal, credentials, id, context, progressLog } = goalInvocation;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
+        return configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
 
             for (const preparation of preparations) {
                 const pResult = await preparation(p, goalInvocation);
