@@ -36,7 +36,7 @@ export interface DockerOptions {
     /**
      * True if the docker image should be pushed to the registry
      */
-    push: boolean;
+    push?: boolean;
 
     /**
      * Optional registry to push the docker image too.
@@ -46,7 +46,7 @@ export interface DockerOptions {
 
     /**
      * Optional user to use when pushing the docker image.
-     * Needs to set when push === true*
+     * Needs to set when push === true
      */
     user?: string;
 
@@ -94,7 +94,7 @@ export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
             };
 
             const imageName = await imageNameCreator(p, sdmGoal, options, context);
-            const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
+            const image = `${imageName.registry ? `${imageName.registry}/` : ""}${imageName.name}:${imageName.version}`;
             const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
             // 1. run docker build
