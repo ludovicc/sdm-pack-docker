@@ -31,7 +31,7 @@ import {
 /**
  * Registration for a certain docker build and push configuration
  */
-export interface DockerBuildRegistration extends ImplementationRegistration {
+export interface DockerBuildRegistration extends Partial<ImplementationRegistration> {
     options: DockerOptions;
     imageNameCreator?: DockerImageNameCreator;
     preparations?: PrepareForGoalExecution[];
@@ -62,6 +62,7 @@ export class DockerBuild extends FulfillableGoalWithRegistrations<DockerBuildReg
                 registration.preparations,
                 registration.options,
             ),
+            name: DefaultGoalNameGenerator.generateName("docker-builder"),
             ...registration as ImplementationRegistration,
         });
         return this;
