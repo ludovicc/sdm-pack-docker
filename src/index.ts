@@ -8,3 +8,7 @@ export {
     DockerBuild,
     DockerBuildRegistration,
 } from "./docker/DockerBuild";
+export {
+    DockerProgressReporter,
+    DockerProgressTests,
+} from "./docker/DockerProgressReporter";

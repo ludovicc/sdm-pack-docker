@@ -21,6 +21,7 @@ import {
     IndependentOfEnvironment,
     PrepareForGoalExecution,
 } from "@atomist/sdm";
+import { DockerProgressReporter } from "./DockerProgressReporter";
 import {
     DefaultDockerImageNameCreator,
     DockerImageNameCreator,
@@ -63,6 +64,7 @@ export class DockerBuild extends FulfillableGoalWithRegistrations<DockerBuildReg
                 registration.options,
             ),
             name: DefaultGoalNameGenerator.generateName("docker-builder"),
+            progressReporter: DockerProgressReporter,
             ...registration as ImplementationRegistration,
         });
         return this;
