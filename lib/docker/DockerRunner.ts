@@ -11,6 +11,7 @@ export interface DockerRunnerOptions {
     lowerPort: number;
     successPatterns: RegExp[];
     baseUrl: string;
+    sourcePort: number;
 }
 
 export class DockerRunner {
@@ -48,7 +49,7 @@ export class DockerRunner {
         const childProcess = spawn("docker",
             [
                 "run",
-                `-p${port}:8080`,
+                `-p${port}:${this.options.sourcePort}`,
                 `--name=${name}`,
                 goalInvocation.sdmGoal.push.after.image.imageName,
             ],

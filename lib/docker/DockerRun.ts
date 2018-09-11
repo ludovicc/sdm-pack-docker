@@ -16,6 +16,7 @@ export interface DockerRunRegistration extends Partial<ImplementationRegistratio
     lowerPort?: number;
     successPatterns: RegExp[];
     baseUrl?: string;
+    sourcePort: number;
 }
 
 export class DockerRun extends FulfillableGoalWithRegistrations<DockerRunRegistration> {
@@ -36,7 +37,8 @@ export class DockerRun extends FulfillableGoalWithRegistrations<DockerRunRegistr
             goalExecutor: executeDockerRun( {
                 successPatterns: registration.successPatterns,
                 lowerPort: registration.lowerPort ? registration.lowerPort : 9090,
-                baseUrl: registration.baseUrl ? registration.baseUrl : "localhost",
+                baseUrl: registration.baseUrl ? registration.baseUrl : "http://localhost",
+                sourcePort: registration.sourcePort,
             }),
             name: DefaultGoalNameGenerator.generateName("docker-runner"),
         });
