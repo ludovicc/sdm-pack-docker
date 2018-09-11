@@ -9,6 +9,10 @@ export {
     DockerBuildRegistration,
 } from "./docker/DockerBuild";
 export {
+    DockerRun,
+    DockerRunRegistration,
+} from "./docker/DockerRun";
+export {
     DockerProgressReporter,
     DockerProgressTests,
 } from "./docker/DockerProgressReporter";

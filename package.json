@@ -25,7 +25,8 @@
     "url": "https://github.com/atomist/sdm-pack-docker/issues"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "portfinder": "^1.0.17"
   },
   "peerDependencies": {
     "@atomist/automation-client": "*",
