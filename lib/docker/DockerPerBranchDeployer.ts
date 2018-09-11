@@ -23,14 +23,32 @@ import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm/api-helper/log/
 import { spawn } from "child_process";
 import * as portfinder from "portfinder";
 
-export interface DockerRunnerOptions {
+/**
+ * Options for the DockerPerBranchDeployer
+ */
+export interface DockerPerBranchDeployerOptions {
+    /**
+     * Starting port to be scanned for free ports
+     */
     lowerPort: number;
+    /**
+     * Pattern that indicates that the container has started up correctly
+     */
     successPatterns: RegExp[];
+    /**
+     * Base URL for the docker container. Probably localhost or your Docker machine IP
+     */
     baseUrl: string;
+    /**
+     * The exposed port in the Dockerfile to be mapped externally
+     */
     sourcePort: number;
 }
 
-export class DockerRunner {
+/**
+ * Deployer that uses `docker run` in order to deploy images produces by the `DockerBuild` goal.
+ */
+export class DockerPerBranchDeployer {
 
     // Already allocated ports
     public readonly repoBranchToPort: { [repoAndBranch: string]: number } = {};
@@ -38,7 +56,7 @@ export class DockerRunner {
     // Keys are ports: values are containerIds
     private readonly portToContainer: { [port: number]: string } = {};
 
-    constructor(private readonly options: DockerRunnerOptions) {}
+    constructor(private readonly options: DockerPerBranchDeployerOptions) {}
 
     public async deployProject(goalInvocation: GoalInvocation): Promise<SpawnedDeployment> {
         const branch = goalInvocation.sdmGoal.branch;
@@ -104,9 +122,9 @@ export class DockerRunner {
                 if (this.options.successPatterns.some(successPattern => successPattern.test(stdout))) {
                     resolve(deployment);
                 } else {
-                    logger.error("Maven deployment failure vvvvvvvvvvvvvvvvvvvvvv");
+                    logger.error("Docker deployment failure vvvvvvvvvvvvvvvvvvvvvv");
                     logger.error("stdout:\n%s\nstderr:\n%s\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", stdout, stderr);
-                    reject(new Error("Maven deployment failure"));
+                    reject(new Error("Docker deployment failure"));
                 }
             });
             childProcess.addListener("error", reject);

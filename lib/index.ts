@@ -25,9 +25,9 @@ export {
     DockerBuildRegistration,
 } from "./docker/DockerBuild";
 export {
-    DockerRun,
-    DockerRunRegistration,
-} from "./docker/DockerRun";
+    DockerDeploy,
+    DockerDeployRegistration,
+} from "./docker/DockerDeploy";
 export {
     DockerProgressReporter,
     DockerProgressTests,
