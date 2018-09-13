@@ -24,6 +24,8 @@
   "bugs": {
     "url": "https://github.com/atomist/sdm-pack-docker/issues"
   },
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "dependencies": {
     "lodash": "^4.17.10",
     "portfinder": "^1.0.17"
