@@ -90,7 +90,7 @@ export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
             };
 
             const spOpts = {
-                errorFinder: code => code !== 0,
+                errorFinder: (code: any) => code !== 0,
             };
 
             const imageName = await imageNameCreator(p, sdmGoal, options, context);
@@ -133,7 +133,7 @@ async function dockerPush(image: string,
                           progressLog: ProgressLog): Promise<ExecuteGoalResult> {
 
     const spOpts = {
-        errorFinder: code => code !== 0,
+        errorFinder: (code: any) => code !== 0,
     };
 
     // Default so that we don't attempt to push in local mode
