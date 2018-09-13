@@ -19,6 +19,7 @@ export {
     DockerOptions,
     DockerImageNameCreator,
     executeDockerBuild,
+    DefaultDockerImageNameCreator,
 } from "./lib/docker/executeDockerBuild";
 export {
     DockerBuild,

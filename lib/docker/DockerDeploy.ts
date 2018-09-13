@@ -97,7 +97,7 @@ export class DockerDeploy extends FulfillableGoalWithRegistrations<DockerDeployR
 function executeDockerRun(options: DockerPerBranchDeployerOptions): ExecuteGoal {
     const deployer = new DockerPerBranchDeployer(options);
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        return await deployer.deployProject(goalInvocation).then(deployment => {
+        return deployer.deployProject(goalInvocation).then(deployment => {
                 return {
                     code: 0,
                     targetUrl: deployment.endpoint,

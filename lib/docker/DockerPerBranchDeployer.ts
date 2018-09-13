@@ -15,6 +15,10 @@
  */
 
 import {
+    ExecResult,
+    safeExec,
+} from "@atomist/automation-client";
+import {
     GoalInvocation,
     logger,
 } from "@atomist/sdm";
@@ -132,8 +136,8 @@ export class DockerPerBranchDeployer {
     }
 }
 
-function stopAndRemoveContainer(existingContainer: string) {
-    spawn("docker",
+function stopAndRemoveContainer(existingContainer: string): Promise<ExecResult> {
+    return safeExec("docker",
         [
             "rm",
             "-f",
