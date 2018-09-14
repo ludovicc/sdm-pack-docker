@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    Success,
+    SuccessIsReturn0ErrorFinder,
+} from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     ExecuteGoal,
@@ -90,15 +94,22 @@ export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
             };
 
             const spOpts = {
-                errorFinder: (code: any) => code !== 0,
+                errorFinder: SuccessIsReturn0ErrorFinder,
             };
 
             const imageName = await imageNameCreator(p, sdmGoal, options, context);
             const image = `${imageName.registry ? `${imageName.registry}/` : ""}${imageName.name}:${imageName.version}`;
             const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
-            // 1. run docker build
-            let result: ExecuteGoalResult = await spawnAndWatch(
+            // 1. run docker login
+            let result: ExecuteGoalResult = await dockerLogin(options, progressLog);
+
+            if (result.code !== 0) {
+                return result;
+            }
+
+            // 2. run docker build
+            result = await spawnAndWatch(
                 {
                     command: "docker",
                     args: ["build", ".", "-f", dockerfilePath, "-t", image],
@@ -111,7 +122,12 @@ export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
                 return result;
             }
 
+            // 3. run docker push
             result = await dockerPush(image, options, progressLog);
+
+            if (result.code !== 0) {
+                return result;
+            }
 
             // 4. create image link
             if (await postLinkImageWebhook(
@@ -128,12 +144,45 @@ export function executeDockerBuild(imageNameCreator: DockerImageNameCreator,
     };
 }
 
+async function dockerLogin(options: DockerOptions,
+                           progressLog: ProgressLog): Promise<ExecuteGoalResult> {
+
+    const spOpts = {
+        errorFinder: SuccessIsReturn0ErrorFinder,
+    };
+
+    if (options.user && options.password) {
+        progressLog.write("Running 'docker login'");
+        const loginArgs: string[] = ["login", "--username", options.user, "--password", options.password];
+        if (/[^A-Za-z0-9]/.test(options.registry)) {
+            loginArgs.push(options.registry);
+        }
+
+        // 2. run docker login
+        return spawnAndWatch(
+            {
+                command: "docker",
+                args: loginArgs,
+            },
+            {},
+            progressLog,
+            {
+                ...spOpts,
+                logCommand: false,
+            });
+
+    } else {
+        progressLog.write("Skipping 'docker login' because user and password are not configured");
+        return Success;
+    }
+}
+
 async function dockerPush(image: string,
                           options: DockerOptions,
                           progressLog: ProgressLog): Promise<ExecuteGoalResult> {
 
     const spOpts = {
-        errorFinder: (code: any) => code !== 0,
+        errorFinder: SuccessIsReturn0ErrorFinder,
     };
 
     // Default so that we don't attempt to push in local mode
@@ -150,30 +199,8 @@ async function dockerPush(image: string,
             return { code: 1, message };
         }
 
-        const loginArgs: string[] = ["login", "--username", options.user, "--password", options.password];
-        if (/[^A-Za-z0-9]/.test(options.registry)) {
-            loginArgs.push(options.registry);
-        }
-
-        // 2. run docker login
-        let result = await spawnAndWatch(
-            {
-                command: "docker",
-                args: loginArgs,
-            },
-            {},
-            progressLog,
-            {
-                ...spOpts,
-                logCommand: false,
-            });
-
-        if (result.code !== 0) {
-            return result;
-        }
-
-        // 3. run docker push
-        result = await spawnAndWatch(
+         // 1. run docker push
+        return spawnAndWatch(
             {
                 command: "docker",
                 args: ["push", image],
@@ -182,9 +209,8 @@ async function dockerPush(image: string,
             progressLog,
             spOpts);
 
-        if (result.code !== 0) {
-            return result;
-        }
+    } else {
+        progressLog.write("Skipping 'docker push'");
     }
 }
 
