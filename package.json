@@ -35,9 +35,9 @@
     "@atomist/sdm": "*"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.0-master.20180913093131",
-    "@atomist/sdm": "1.0.0-master.20180913101258",
-    "@atomist/sdm-core": "1.0.0-master.20180913110440",
+    "@atomist/automation-client": "1.0.0-master.20180914125809",
+    "@atomist/sdm": "1.0.0-master.20180914132622",
+    "@atomist/sdm-core": "1.0.0-master.20180914141908",
     "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.48",
     "@types/node": "^9.4.1",
@@ -51,30 +51,28 @@
     "ts-node": "^3.3.0",
     "tslint": "^5.9.1",
     "typedoc": "^0.11.1",
-    "typescript": "^2.9.2",
-    "typescript-formatter": "^7.2.0"
+    "typescript": "^2.9.2"
   },
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "npm-run-all lint compile",
-    "clean": "npm-run-all clean:js clean:build",
-    "clean:benchmark": "rimraf isolate-*-v8.log",
-    "clean:build": "rimraf *-v8.log profile.txt build",
-    "clean:dist": "npm-run-all clean clean:npm",
-    "clean:js": "rimraf \"{src,test}/**/*.js\"",
+    "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
+    "build": "run-s compile test lint doc",
+    "clean": "run-p clean:compile clean:doc clean:run",
+    "clean:compile": "rimraf git-info.json \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
+    "clean:dist": "run-s clean clean:npm",
+    "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
-    "compile": "npm-run-all compile:ts",
+    "clean:run": "rimraf *-v8.log profile.txt log",
+    "compile": "run-s compile:ts",
     "compile:ts": "tsc --project .",
-    "fmt": "tsfmt --replace",
-    "lint": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
+    "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test": "mocha --require espower-typescript/guess --exit \"test/{*.ts,!(api|benchmark|bitbucket-api)/**/*.ts}\"",
-    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
-    "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",
-    "watch:compile": "tsc --project . --watch",
-    "watch": "supervisor --watch build --quiet --exec npm -- run start"
+    "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
+    "typedoc": "npm run doc"
   },
   "engines": {
     "node": "9.x.x",

@@ -15,13 +15,15 @@
  */
 
 import {
+    GitProject,
     HandlerContext,
+    spawnAndWatch,
     Success,
     SuccessIsReturn0ErrorFinder,
 } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     ExecuteGoal,
+    ExecuteGoalResult,
     GoalInvocation,
     PrepareForGoalExecution,
     ProgressLog,
@@ -32,8 +34,6 @@ import {
     postLinkImageWebhook,
     readSdmVersion,
 } from "@atomist/sdm-core";
-import { spawnAndWatch } from "@atomist/sdm/api-helper/misc/spawned";
-import { ExecuteGoalResult } from "@atomist/sdm/api/goal/ExecuteGoalResult";
 
 export interface DockerOptions {
 

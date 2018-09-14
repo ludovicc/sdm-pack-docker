@@ -15,10 +15,10 @@
  */
 
 import {
-    predicatePushTest,
+    hasFile,
     PredicatePushTest,
-} from "@atomist/sdm/api/mapping/PushTest";
-import { hasFile } from "@atomist/sdm/api/mapping/support/commonPushTests";
+    predicatePushTest,
+} from "@atomist/sdm";
 
 /**
  * Does this project have a Dockerfile

@@ -19,11 +19,11 @@ import {
     safeExec,
 } from "@atomist/automation-client";
 import {
+    DelimitedWriteProgressLogDecorator,
     GoalInvocation,
     logger,
 } from "@atomist/sdm";
 import { SpawnedDeployment } from "@atomist/sdm-core";
-import { DelimitedWriteProgressLogDecorator } from "@atomist/sdm/api-helper/log/DelimitedWriteProgressLogDecorator";
 import { spawn } from "child_process";
 import * as portfinder from "portfinder";
 
