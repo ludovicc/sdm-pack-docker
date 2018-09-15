@@ -212,6 +212,8 @@ async function dockerPush(image: string,
     } else {
         progressLog.write("Skipping 'docker push'");
     }
+
+    return Success;
 }
 
 export const DefaultDockerImageNameCreator: DockerImageNameCreator = async (p, sdmGoal, options, context) => {
