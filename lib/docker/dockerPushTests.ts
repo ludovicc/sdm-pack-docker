@@ -16,8 +16,8 @@
 
 import {
     hasFile,
-    PredicatePushTest,
     predicatePushTest,
+    PredicatePushTest,
 } from "@atomist/sdm";
 
 /**
