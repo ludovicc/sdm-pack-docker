@@ -84,7 +84,7 @@ export class DockerDeploy extends FulfillableGoalWithRegistrations<DockerDeployR
             goalExecutor: executeDockerRun( {
                 successPatterns: registration.successPatterns,
                 lowerPort: registration.lowerPort ? registration.lowerPort : 9090,
-                baseUrl: registration.baseUrl ? registration.baseUrl : "http://localhost",
+                baseUrl: registration.baseUrl ? registration.baseUrl : "http://127.0.0.1",
                 sourcePort: registration.sourcePort,
             }),
             name: DefaultGoalNameGenerator.generateName("docker-runner"),
