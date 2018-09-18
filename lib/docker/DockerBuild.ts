@@ -16,7 +16,10 @@
 
 import {
     DefaultGoalNameGenerator,
+    FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
+    getGoalDefintionFrom,
+    Goal,
     ImplementationRegistration,
     IndependentOfEnvironment,
     PrepareForGoalExecution,
@@ -43,16 +46,18 @@ export interface DockerBuildRegistration extends Partial<ImplementationRegistrat
  */
 export class DockerBuild extends FulfillableGoalWithRegistrations<DockerBuildRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("docker-build")) {
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("docker-build"),
+                ...dependsOn: Goal[]) {
 
         super({
-            uniqueName,
             displayName: "docker build",
             environment: IndependentOfEnvironment,
             workingDescription: "Running docker build",
             completedDescription: "Docker build successful",
             failedDescription: "Docker build failed",
             isolated: true,
+            retryFeasible: true,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("docker-build")),
         });
     }
 
